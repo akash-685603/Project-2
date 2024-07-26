@@ -29,7 +29,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('/tmp/Project2_tmp') {
+                    dir(/home/akash/Documents/Project2) {
                         sh 'docker build -t akashsingh/xyztechnologies:1.0 .'
                     }
                 }
