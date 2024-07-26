@@ -30,7 +30,20 @@ pipeline {
             steps {
                 script {
                     dir('/home/akash/Documents/Project2') {
-                        sh 'docker build -t my-app-image .'
+                        sh 'docker build -t akashsingh/xyztechnologies:1.0 .'
+                    }
+                }
+            }
+        }
+        
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                        docker push akashsingh/xyztechnologies:1.0
+                        '''
                     }
                 }
             }
@@ -42,7 +55,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker run -d -p 8081:8080 my-app-image'
+                    sh 'docker run -d -p 8081:8080 akashsingh/xyztechnologies:1.0'
                 }
             }
         }
