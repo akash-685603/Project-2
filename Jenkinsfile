@@ -1,87 +1,67 @@
 pipeline {
     agent any
-    
-    environment {
-        // Set environment variables if needed
-    }
 
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Checkout code from GitHub
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: '*/master']],
-                        userRemoteConfigs: [[url: 'https://github.com/akash-685603/edureka-project-2.git']]
-                    ])
-                }
+                git branch: 'master', url: 'https://github.com/akash-685603/edureka-project-2.git'
             }
         }
-
+        
         stage('Compile') {
             steps {
-                script {
-                    // Compile the code
-                    sh 'mvn compile'
-                }
+                sh 'mvn compile'
             }
         }
-
+        
         stage('Test') {
             steps {
-                script {
-                    // Run tests
-                    sh 'mvn test'
-                }
+                sh 'mvn test'
             }
         }
-
+        
         stage('Package') {
             steps {
-                script {
-                    // Package the application
-                    sh 'mvn package'
-                }
+                sh 'mvn package'
             }
         }
-
+        
         stage('Build Docker Image') {
             steps {
                 script {
                     dir('/home/akash/Documents/Project2') {
-                        // Build Docker image
-                        sh 'docker build -t xyztechnologies:latest .'
+                        sh 'docker build -t my-app-image .'
                     }
                 }
             }
         }
-
+        
         stage('Deploy Docker Container') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 script {
-                    // Deploy Docker container
-                    sh 'docker run -d -p 8081:8080 xyztechnologies:latest'
+                    sh 'docker run -d -p 8081:8080 my-app-image'
                 }
             }
         }
         
         stage('Debug') {
+            when {
+                expression { currentBuild.result == 'FAILURE' }
+            }
             steps {
-                script {
-                    // Debugging information
-                    echo 'Pipeline failed. Checking file permissions:'
-                    sh 'ls -la /home/akash/Documents/Project2'
-                    
-                    echo 'Docker status:'
-                    sh 'docker info'
-                }
+                echo 'Pipeline failed. Checking file permissions:'
+                sh 'ls -la /home/akash/Documents/Project2'
+                echo 'Docker status:'
+                sh 'docker info'
             }
         }
     }
-
+    
     post {
         always {
-            // Clean workspace after the build
             cleanWs()
         }
     }
