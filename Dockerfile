@@ -17,11 +17,15 @@ USER root
 RUN chown -R tomcat:tomcat ${CATALINA_HOME}/webapps/XYZtechnologies-1.0.war && \
     chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml
 
-# Expose port 8081 (ensure Tomcat is configured to listen on this port)
+# Expose port 8081
 EXPOSE 8081
 
 # Modify Tomcat's server.xml to listen on port 8081
 RUN sed -i 's/port="8080"/port="8081"/g' ${CATALINA_HOME}/conf/server.xml
+
+# Debug step to verify file placement
+RUN ls -l ${CATALINA_HOME}/webapps/
+RUN ls -l ${CATALINA_HOME}/conf/
 
 # Ensure the Tomcat process runs as the tomcat user
 USER tomcat
