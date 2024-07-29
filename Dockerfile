@@ -1,4 +1,3 @@
-# Base image
 FROM tomcat:9.0
 
 # Create a tomcat user and group
@@ -8,15 +7,15 @@ RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
 ENV CATALINA_HOME /usr/local/tomcat
 
 # Copy the WAR file into the Tomcat webapps directory
-COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
+COPY target/XYZtechnologies-1.0.war /usr/local/tomcat/webapps/
 
 # Copy the custom server.xml file into the Tomcat conf directory
-COPY edureka-project-2/docker-context/conf/server.xml ${CATALINA_HOME}/conf/
+COPY conf/server.xml /usr/local/tomcat/conf/
 
 # Adjust file permissions and ownership
-RUN chmod 644 ${CATALINA_HOME}/conf/server.xml && \
-    chown -R tomcat:tomcat ${CATALINA_HOME}/webapps && \
-    chown -R tomcat:tomcat ${CATALINA_HOME}/conf
+RUN chmod 644 /usr/local/tomcat/conf/server.xml && \
+    chown tomcat:tomcat /usr/local/tomcat/webapps/XYZtechnologies-1.0.war && \
+    chown tomcat:tomcat /usr/local/tomcat/conf/server.xml
 
 # Expose port 8081
 EXPOSE 8081
