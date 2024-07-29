@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Server port="8005" shutdown="SHUTDOWN">
 
     <Service name="Catalina">
@@ -15,6 +16,7 @@
 
                 <!-- Context pointing to the unpacked WAR file -->
                 <Context path="" docBase="${catalina.base}/webapps/XYZtechnologies-1.0" />
+
             </Host>
         </Engine>
     </Service>
