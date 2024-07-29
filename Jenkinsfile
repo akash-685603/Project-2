@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
-        DOCKER_CREDENTIALS_ID = 'akash7575' // Updated Docker credentials ID
-        REGISTRY = 'docker.io' // Replace with your Docker registry if different
+        DOCKER_CREDENTIALS_ID = 'akash7575'
+        REGISTRY = 'docker.io'
         DEPLOYMENT_PORT = '8081'
     }
 
@@ -36,7 +36,7 @@ pipeline {
                 sh 'mvn package'
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
