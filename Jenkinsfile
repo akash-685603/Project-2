@@ -40,7 +40,8 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    sh "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
+                    def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
+                    sh returnStdout: true, script: buildCmd
                 }
             }
         }
@@ -48,13 +49,15 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
+                    echo "Pushing Docker image ${DOCKER_IMAGE}..."
                     try {
                         docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
                             docker.image("${DOCKER_IMAGE}").push('latest')
                             docker.image("${DOCKER_IMAGE}").push('1.0')
                         }
                     } catch (Exception e) {
-                        echo "Failed to push Docker image: ${e}"
+                        echo "Failed to push Docker image: ${e.message}"
+                        currentBuild.result = 'FAILURE'
                         throw e
                     }
                 }
@@ -64,7 +67,9 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 script {
-                    sh "docker run -d -p ${DEPLOYMENT_PORT}:${DEPLOYMENT_PORT} --name xyztechnologies ${DOCKER_IMAGE}"
+                    sh """
+                    docker run -d -p ${DEPLOYMENT_PORT}:${DEPLOYMENT_PORT} --name xyztechnologies ${DOCKER_IMAGE}
+                    """
                 }
             }
         }
