@@ -1,22 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Server port="8005" shutdown="SHUTDOWN">
-
     <Service name="Catalina">
-
         <!-- Define the connector to listen on port 8081 -->
         <Connector port="8081" protocol="HTTP/1.1"
                    connectionTimeout="20000"
                    redirectPort="8443" />
-
         <Engine name="Catalina" defaultHost="localhost">
-
             <!-- Define the host and the context -->
             <Host name="localhost" appBase="webapps"
                   unpackWARs="true" autoDeploy="true">
-
-                <!-- Context pointing to the unpacked WAR file -->
-                <Context path="/XYZtechnologies-1.0" docBase="/usr/local/tomcat/webapps/XYZtechnologies-1.0.war" />
-
+                <!-- Context pointing to the WAR file without the path attribute -->
+                <Context docBase="XYZtechnologies-1.0" />
             </Host>
         </Engine>
     </Service>
