@@ -15,7 +15,7 @@
                   unpackWARs="true" autoDeploy="true">
 
                 <!-- Context pointing to the unpacked WAR file -->
-                <Context path="" docBase="${catalina.base}/webapps/XYZtechnologies-1.0" />
+                <Context path="/XYZtechnologies-1.0" docBase="/usr/local/tomcat/webapps/XYZtechnologies-1.0.war" />
 
             </Host>
         </Engine>
