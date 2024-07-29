@@ -7,7 +7,7 @@ RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
 ENV CATALINA_HOME /usr/local/tomcat
 
 # Copy the WAR file into the Tomcat webapps directory
-COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
+COPY target/XYZtechnologies-1.0.war /usr/local/tomcat/webapps/
 
 # Copy the custom server.xml file into the Tomcat conf directory
 COPY conf/server.xml ${CATALINA_HOME}/conf/
