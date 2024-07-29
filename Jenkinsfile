@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
+        DOCKER_IMAGE = 'akash7575/xyztechnologies:latest'
         DOCKER_CREDENTIALS_ID = 'akash7575'
         REGISTRY = 'docker.io'
         DEPLOYMENT_PORT = '8081'
