@@ -4,9 +4,6 @@ FROM tomcat:9.0
 # Set environment variables
 ENV CATALINA_HOME /usr/local/tomcat
 
-# Create a tomcat user and group if they don't exist
-RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
-
 # Copy the WAR file into the Tomcat webapps directory
 COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
 
@@ -16,7 +13,7 @@ COPY server.xml ${CATALINA_HOME}/conf/
 # Use root to adjust permissions
 USER root
 RUN chown -R tomcat:tomcat ${CATALINA_HOME}/webapps/XYZtechnologies-1.0.war && \
-    chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml || true
+    chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml
 
 # Expose port 8081 (ensure Tomcat is configured to listen on this port)
 EXPOSE 8081
