@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
         DOCKER_CREDENTIALS_ID = 'akash7575'
-        REGISTRY = 'docker.io'
+        REGISTRY = 'index.docker.io/v1'
         DEPLOYMENT_PORT = '8081'
     }
 
