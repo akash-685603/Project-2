@@ -4,6 +4,9 @@ FROM tomcat:9.0
 # Set environment variables
 ENV CATALINA_HOME /usr/local/tomcat
 
+# Create a tomcat user and group if they don't exist
+RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
+
 # Copy the WAR file into the Tomcat webapps directory
 COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
 
