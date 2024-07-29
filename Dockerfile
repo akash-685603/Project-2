@@ -10,9 +10,10 @@ COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
 # Copy the custom server.xml file into the Tomcat conf directory
 COPY server.xml ${CATALINA_HOME}/conf/
 
-# Adjust permissions to ensure Tomcat can access the files
+# Use root to adjust permissions
+USER root
 RUN chown -R tomcat:tomcat ${CATALINA_HOME}/webapps/XYZtechnologies-1.0.war && \
-    chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml
+    chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml || true
 
 # Expose port 8081 (ensure Tomcat is configured to listen on this port)
 EXPOSE 8081
