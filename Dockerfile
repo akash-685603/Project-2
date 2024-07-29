@@ -1,5 +1,7 @@
-# Use a specific version of the Tomcat image from the Docker Hub
 FROM tomcat:9.0
+
+# Create a tomcat user and group
+RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
 
 # Set environment variables
 ENV CATALINA_HOME /usr/local/tomcat
@@ -8,17 +10,21 @@ ENV CATALINA_HOME /usr/local/tomcat
 COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
 
 # Copy the custom server.xml file into the Tomcat conf directory
-COPY server.xml ${CATALINA_HOME}/conf/
+COPY conf/server.xml /usr/local/tomcat/conf/
 
-# Adjust permissions to ensure Tomcat can access the files
+RUN chmod 644 /usr/local/tomcat/conf/server.xml
+
+# Use root to adjust permissions
+USER root
 RUN chown -R tomcat:tomcat ${CATALINA_HOME}/webapps/XYZtechnologies-1.0.war && \
     chown -R tomcat:tomcat ${CATALINA_HOME}/conf/server.xml
 
-# Expose port 8081 (ensure Tomcat is configured to listen on this port)
+# Expose port 8081
 EXPOSE 8081
 
-# Modify Tomcat's server.xml to listen on port 8081
-RUN sed -i 's/port="8080"/port="8081"/g' ${CATALINA_HOME}/conf/server.xml
+# Debug step to verify file placement
+RUN ls -l ${CATALINA_HOME}/webapps/
+RUN ls -l ${CATALINA_HOME}/conf/
 
 # Ensure the Tomcat process runs as the tomcat user
 USER tomcat
