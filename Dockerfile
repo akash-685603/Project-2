@@ -1,5 +1,7 @@
-# Use a specific version of the Tomcat image from the Docker Hub
 FROM tomcat:9.0
+
+# Create a tomcat user and group
+RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
 
 # Set environment variables
 ENV CATALINA_HOME /usr/local/tomcat
