@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'akashsingh/xyztechnologies:1.0'
-        DOCKER_CREDENTIALS_ID = 'dockerhub'
+        DOCKER_CREDENTIALS_ID = 'akash7575' // Updated Docker credentials ID
         REGISTRY = 'docker.io' // Replace with your Docker registry if different
         DEPLOYMENT_PORT = '8081'
     }
