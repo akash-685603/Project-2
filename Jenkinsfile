@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'akash7575/xyztechnologies:latest'
+        DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
         DOCKER_CREDENTIALS_ID = 'akash7575'
         REGISTRY = 'docker.io'
         DEPLOYMENT_PORT = '8081'
@@ -11,7 +11,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code using default Git tool
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']],
                           userRemoteConfigs: [[url: 'https://github.com/akash-685603/Project-2.git']]
@@ -41,9 +40,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    // Corrected docker build command with context
-                    def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
-                    sh returnStdout: true, script: buildCmd
+                    sh "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
                 }
             }
         }
@@ -51,9 +48,14 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        docker.image("${DOCKER_IMAGE}").push('latest')
-                        docker.image("${DOCKER_IMAGE}").push('1.0')
+                    try {
+                        docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
+                            docker.image("${DOCKER_IMAGE}").push('latest')
+                            docker.image("${DOCKER_IMAGE}").push('1.0')
+                        }
+                    } catch (Exception e) {
+                        echo "Failed to push Docker image: ${e}"
+                        throw e
                     }
                 }
             }
@@ -62,9 +64,7 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 script {
-                    sh """
-                    docker run -d -p ${DEPLOYMENT_PORT}:${DEPLOYMENT_PORT} --name xyztechnologies ${DOCKER_IMAGE}
-                    """
+                    sh "docker run -d -p ${DEPLOYMENT_PORT}:${DEPLOYMENT_PORT} --name xyztechnologies ${DOCKER_IMAGE}"
                 }
             }
         }
