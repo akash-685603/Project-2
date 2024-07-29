@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'akashsingh/xyztechnologies:1.0'
+        DOCKER_CREDENTIALS_ID = 'dockerhub'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -29,8 +34,13 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('/home/akash/Documents/Project2/Project2@tmp/') {
-                        sh 'docker build -t akashsingh/xyztechnologies:1.0 .'
+                    dir('/home/akash/Documents/Project2') {
+                        echo 'Current directory:'
+                        sh 'pwd'
+                        echo 'Listing files:'
+                        sh 'ls -la'
+                        echo 'Building Docker image...'
+                        sh 'docker build -t ${DOCKER_IMAGE} .'
                     }
                 }
             }
@@ -39,10 +49,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        echo 'Pushing Docker image to DockerHub...'
                         sh '''
                         echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                        docker push akashsingh/xyztechnologies:1.0
+                        docker push ${DOCKER_IMAGE}
                         '''
                     }
                 }
@@ -55,7 +66,12 @@ pipeline {
             }
             steps {
                 script {
-                    sh 'docker run -d -p 8081:8080 akashsingh/xyztechnologies:1.0'
+                    echo 'Deploying Docker container...'
+                    sh '''
+                    docker stop xyztechnologies || true
+                    docker rm xyztechnologies || true
+                    docker run -d --name xyztechnologies -p 8081:8080 ${DOCKER_IMAGE}
+                    '''
                 }
             }
         }
