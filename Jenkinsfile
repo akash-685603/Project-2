@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'akashsingh/xyztechnologies:1.0'
+        DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
         DOCKER_CREDENTIALS_ID = 'akash7575' // Updated Docker credentials ID
         REGISTRY = 'docker.io' // Replace with your Docker registry if different
         DEPLOYMENT_PORT = '8081'
