@@ -1,5 +1,5 @@
-# Use the official Tomcat image from the Docker Hub
-FROM tomcat:latest
+# Use a specific version of the Tomcat image from the Docker Hub
+FROM tomcat:9.0
 
 # Set environment variables
 ENV CATALINA_HOME /usr/local/tomcat
