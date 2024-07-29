@@ -10,7 +10,7 @@ ENV CATALINA_HOME /usr/local/tomcat
 COPY target/XYZtechnologies-1.0.war ${CATALINA_HOME}/webapps/
 
 # Copy the custom server.xml file into the Tomcat conf directory
-COPY server.xml ${CATALINA_HOME}/conf/
+COPY /home/akash/Documents/Project2/edureka-project-2/server.xml /usr/local/tomcat/conf/
 
 # Use root to adjust permissions
 USER root
