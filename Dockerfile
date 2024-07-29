@@ -1,3 +1,4 @@
+# Use the official Tomcat image as the base image
 FROM tomcat:9.0
 
 # Create a tomcat user and group
