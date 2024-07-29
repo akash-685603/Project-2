@@ -14,7 +14,7 @@ pipeline {
                 // Checkout code using default Git tool
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']],
-                          userRemoteConfigs: [[url: 'https://github.com/akash-685603/edureka-project-2.git']]
+                          userRemoteConfigs: [[url: 'https://github.com/akash-685603/Project-2.git']]
                 ])
             }
         }
@@ -36,13 +36,14 @@ pipeline {
                 sh 'mvn package'
             }
         }
+        
         stage('Build Docker Image') {
             steps {
-            script {
-                echo 'Building Docker image...'
-                // Corrected docker build command with context
-                def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
-                sh returnStdout: true, script: buildCmd
+                script {
+                    echo 'Building Docker image...'
+                    // Corrected docker build command with context
+                    def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
+                    sh returnStdout: true, script: buildCmd
                 }
             }
         }
