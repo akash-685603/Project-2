@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'akashsingh/xyztechnologies:1.0'
         DOCKER_CREDENTIALS_ID = 'dockerhub'
+        REGISTRY = 'docker.io' // Replace with your Docker registry if different
+        DEPLOYMENT_PORT = '8081'
     }
 
     stages {
@@ -12,19 +14,19 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/akash-685603/edureka-project-2.git'
             }
         }
-        
+
         stage('Compile') {
             steps {
                 sh 'mvn compile'
             }
         }
-        
+
         stage('Test') {
             steps {
                 sh 'mvn test'
             }
         }
-        
+
         stage('Package') {
             steps {
                 sh 'mvn package'
@@ -41,8 +43,8 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/') {
-                    script {
+                script {
+                    docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
                         docker.image(DOCKER_IMAGE).push('latest')
                     }
                 }
@@ -53,7 +55,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run -d -p 8081:8080 --name xyztechnologies ${DOCKER_IMAGE}
+                    docker run -d -p ${DEPLOYMENT_PORT}:8081 --name xyztechnologies ${DOCKER_IMAGE}
                     """
                 }
             }
@@ -63,14 +65,17 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh 'docker container prune -f'
-            sh 'docker image prune -f'
+            sh 'docker stop xyztechnologies || true'
+            sh 'docker rm xyztechnologies || true'
+            sh 'docker rmi ${DOCKER_IMAGE} || true'
         }
-        success {
-            echo 'Build and deployment were successful!'
-        }
+
         failure {
-            echo 'Build or deployment failed. Please check the logs for details.'
+            echo 'Build failed. Please check the logs for more details.'
+        }
+
+        success {
+            echo 'Build succeeded. The Docker container is deployed.'
         }
     }
 }
