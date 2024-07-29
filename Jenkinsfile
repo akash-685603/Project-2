@@ -11,7 +11,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/akash-685603/edureka-project-2.git'
+                // Checkout code using default Git tool
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/master']],
+                          userRemoteConfigs: [[url: 'https://github.com/akash-685603/edureka-project-2.git']]
+                ])
             }
         }
 
@@ -32,11 +36,13 @@ pipeline {
                 sh 'mvn package'
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build(DOCKER_IMAGE)
+            script {
+                echo 'Building Docker image...'
+                // Corrected docker build command with context
+                def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
+                sh returnStdout: true, script: buildCmd
                 }
             }
         }
@@ -45,7 +51,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        docker.image(DOCKER_IMAGE).push('latest')
+                        docker.image("${DOCKER_IMAGE}").push('latest')
+                        docker.image("${DOCKER_IMAGE}").push('1.0')
                     }
                 }
             }
@@ -55,7 +62,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                    docker run -d -p ${DEPLOYMENT_PORT}:8081 --name xyztechnologies ${DOCKER_IMAGE}
+                    docker run -d -p ${DEPLOYMENT_PORT}:${DEPLOYMENT_PORT} --name xyztechnologies ${DOCKER_IMAGE}
                     """
                 }
             }
