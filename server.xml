@@ -1,0 +1,18 @@
+<Server port="8005" shutdown="SHUTDOWN">
+
+    <Service name="Catalina">
+
+        <Connector port="8081" protocol="HTTP/1.1"
+                   connectionTimeout="20000"
+                   redirectPort="8443" />
+
+        <Engine name="Catalina" defaultHost="localhost">
+
+            <Host name="localhost" appBase="webapps"
+                  unpackWARs="true" autoDeploy="true">
+
+                <Context path="" docBase="${catalina.base}/webapps/XYZtechnologies-1.0" />
+            </Host>
+        </Engine>
+    </Service>
+</Server>
