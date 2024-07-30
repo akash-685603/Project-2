@@ -1,0 +1,22 @@
+- name: Manage Docker on Docker Host
+  hosts: docker_host
+  tasks:
+    - name: Ensure pip is installed
+      apt:
+        name: python3-pip
+        state: present
+      become: yes
+
+    - name: Ensure Docker SDK for Python is installed
+      pip:
+        name: docker
+        state: present
+      become: yes
+
+    - name: Build Docker image
+      command: docker build -t akash7575/xyztechnologies:1.0 /home/akash/Documents/FreshProject/Project-2
+      become: yes
+
+    - name: Run Docker container
+      command: docker run -d -p 8081:8081 --name xyztechnologies akash7575/xyztechnologies:1.0
+      become: yes
