@@ -2,16 +2,15 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'akashsingh/xyztechnologies:1.0'
-        DOCKER_CREDENTIALS_ID = 'dockerhub'
-        REGISTRY = 'docker.io' // Replace with your Docker registry if different
+        DOCKER_IMAGE = 'akash7575/xyztechnologies:1.0'
+        DOCKER_CREDENTIALS_ID = 'akash7575'
+        REGISTRY = 'index.docker.io/v1/'
         DEPLOYMENT_PORT = '8081'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code using default Git tool
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']],
                           userRemoteConfigs: [[url: 'https://github.com/akash-685603/Project-2.git']]
@@ -36,12 +35,11 @@ pipeline {
                 sh 'mvn package'
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    // Corrected docker build command with context
                     def buildCmd = "docker build --build-arg DEPLOYMENT_PORT=${DEPLOYMENT_PORT} -t ${DOCKER_IMAGE} ."
                     sh returnStdout: true, script: buildCmd
                 }
@@ -51,9 +49,16 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        docker.image("${DOCKER_IMAGE}").push('latest')
-                        docker.image("${DOCKER_IMAGE}").push('1.0')
+                    echo "Pushing Docker image ${DOCKER_IMAGE}..."
+                    try {
+                        docker.withRegistry("https://${REGISTRY}", DOCKER_CREDENTIALS_ID) {
+                            docker.image("${DOCKER_IMAGE}").push('latest')
+                            docker.image("${DOCKER_IMAGE}").push('1.0')
+                        }
+                    } catch (Exception e) {
+                        echo "Failed to push Docker image: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
                     }
                 }
             }
